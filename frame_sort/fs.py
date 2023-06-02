@@ -7,9 +7,18 @@
    19 z-pos as part of the confocal image stack.
 '''
 import os, glob, os.path
-import shutil
+import shutil as sh
 
+def make_data_folder():
 
+    cwd = os.getcwd()
+    # make a subdirectory inside the cwd called greenImgs
+    newFolder = os.path.join(cwd, 'testImgs/')
+    # if the folder doesn't exist already
+    if not os.path.isdir(newFolder):
+        # make the folder
+        os.mkdir(newFolder)
+        
 
 def specimen_sort():
    specimen = 1
@@ -24,7 +33,7 @@ def specimen_sort():
 def file_sort():
 
     # open green channel image folder
-    path_to_files = '../green_chan_imgs/'
+    path_to_files = 'greenImgs/'
 
     # get the total number of files in the folder
     # shoould = num_specimens * num_frames * tot_zPos
@@ -32,7 +41,7 @@ def file_sort():
                 if os.path.isfile(os.path.join(path_to_files, name))])
     # print(tot_files)
 
-    frame_no = 1
+    frame_no = 0
     # a list of object codes which allow the program to sort data based on string matching
     object_codes = ['_T']
     for i in range(tot_files):
@@ -41,10 +50,9 @@ def file_sort():
         if i % 114 == 0:
             # print("Frames_" + str(frame_no))
             # increment the frame count
-            frame_no = (frame_no + 1)
+            frame_no += 1
             # take the file folder path and name the folders frames_ concatonated with the modulus count
-            frameFolderPath = os.path.join(
-                path_to_files, 'frames_' + str(frame_no))
+            frameFolderPath = os.path.join(path_to_files, 'frames_' + str(frame_no))
         # if a directory name frames_+frame_no does not exist already
         if not os.path.isdir(frameFolderPath):
             # make the directory and name it
@@ -67,8 +75,9 @@ def file_sort():
 # increment to the next frame identifier and continue until end of folder
 def main():
    
-   # file_sort()
-   specimen_sort()
+   make_data_folder()
+   file_sort()
+   # specimen_sort()
 
 
 
