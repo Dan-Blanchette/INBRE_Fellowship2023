@@ -75,7 +75,6 @@ def main():
    folder_created = make_data_folder()
    if folder_created == 0:
    	channel_subfolders()
-   # specimen_sort()
 
 
 
