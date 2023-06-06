@@ -9,16 +9,19 @@
 import os, glob, os.path
 import shutil as sh
 
+
+
 def make_data_folder():
 
     cwd = os.getcwd()
     # make a subdirectory inside the cwd called greenImgs
-    newFolder = os.path.join(cwd, 'testImgs/')
+    newFolder = os.path.join(cwd, 'greenImgs/')
     # if the folder doesn't exist already
     if not os.path.isdir(newFolder):
         # make the folder
         os.mkdir(newFolder)
-        
+
+    return 0   
 
 def specimen_sort():
    specimen = 1
@@ -29,8 +32,8 @@ def specimen_sort():
          print("Specimen_" + str(specimen))
          specimen += 1
 
-
-def file_sort():
+# create new folders T1 -> T(n) for image sorting
+def channel_subfolders():
 
     # open green channel image folder
     path_to_files = 'greenImgs/'
@@ -57,26 +60,21 @@ def file_sort():
         if not os.path.isdir(frameFolderPath):
             # make the directory and name it
             os.mkdir(frameFolderPath)
-
-
         
         
 
 
-# for obc in object_codes:
-#    file_dir = os.path.join(path_to_files, obc)
-#    if not os.path.isdir(file_dir):
-#       os.mkdir(file_dir)
-   
 
 
-# create new folders T1 -> T(n) for image sorting
+
+
 # read file all contents for each specimen and sort them into their respective frame folder
 # increment to the next frame identifier and continue until end of folder
 def main():
    
-   make_data_folder()
-   file_sort()
+   folder_created = make_data_folder()
+   if folder_created == 0:
+   	channel_subfolders()
    # specimen_sort()
 
 
