@@ -1,6 +1,5 @@
 from skimage import io
 import os
-
 import numpy as np
 import glob
 import matplotlib.pyplot as plt
@@ -15,7 +14,7 @@ current_dir = os.getcwd()
 
 path = str(current_dir) + "/frames_1/013020_Lgalsbpb_GFPpos_NoTreatment_T01_XY1_Z10_RGB_Green.tif"
 
-print(path)
+# print(path)
 im = io.imread(path, plugin='pil')
 
 gray_img = color.rgb2gray(im)
