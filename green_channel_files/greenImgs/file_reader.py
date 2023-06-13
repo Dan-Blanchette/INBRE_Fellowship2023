@@ -7,6 +7,7 @@ import ipympl
 import imageio.v3 as iio
 from skimage import color
 from skimage import filters
+from skimage import measure
 
 
 current_dir = os.getcwd()
@@ -122,3 +123,17 @@ plt.title('bitmask applied to Image')
 #
 fig, ax = plt.subplots()
 plt.imshow(selection)
+
+
+labeled_image, cell_count = measure.label(selection, connectivity=2, return_num=True)
+
+print(f"There are {cell_count} cells in {path}")
+
+colored_label_image = color.label2rgb(labeled_image, bg_label=0)
+
+summary_image = color.gray2rgb(gray_image)
+
+summary_image[selection] = colored_label_image[selection]
+
+plt.imshow(summary_image)
+plt.show()

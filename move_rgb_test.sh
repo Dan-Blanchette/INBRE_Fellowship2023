@@ -1,8 +1,33 @@
 #!/bin/bash
-# create a new folder for the files to be stored
-mkdir rgb_files
-# move the files of interest into the new folder
-mv tif_3chan/*RGB.tif rgb_files
-# navigate to the new folder
-cd rgb_files
+
+# Read user input for the pattern
+echo "Please enter the pattern for files to move:"
+read -r pattern
+
+echo "Please enter the destination name for files to move:"
+read -r destination
+mkdir -p "$destination"
+
+# Enable nullglob to handle cases where no files match the pattern
+shopt -s nullglob
+
+# Store the matching filenames in an array
+files=(tif_3chan/"$pattern")
+
+# Check if any files match the pattern
+if [ ${#files[@]} -eq 0 ]; then
+    echo "No files found matching the pattern: $pattern"
+else
+    # Move each file to the destination directory
+    for file in "${files[@]}"; do
+        mv "$file" "$destination"
+    done
+
+    echo "Files moved successfully."
+fi
+
+# Disable nullglob
+shopt -u nullglob
+
+cd "$dir_name" || exit
 touch frame_sort.sh
