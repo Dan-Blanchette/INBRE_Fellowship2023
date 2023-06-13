@@ -4,6 +4,10 @@
 echo "Please enter the pattern for files to move:"
 read -r pattern
 
+echo "What file extension would you like to move?:"
+echo "Ex: .png, .jpeg, .tiff, .tif"
+read -r extension
+
 echo "Please enter the destination name for files to move:"
 read -r destination
 mkdir -p "$destination"
@@ -12,7 +16,8 @@ mkdir -p "$destination"
 shopt -s nullglob
 
 # Store the matching filenames in an array
-files=(tif_3chan/"$pattern")
+# wild_cards are placed before and after the pattern
+files=(pngimgs/*"$pattern"*"$extension")
 
 # Check if any files match the pattern
 if [ ${#files[@]} -eq 0 ]; then
