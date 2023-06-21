@@ -49,10 +49,13 @@ y = filters.threshold_yen(blurred_img)
 # try all filters
 all_thresh = filters.try_all_threshold(blurred_img)
 
-tri = filters.threshold_triangle(blurred_img)
 print(f"threshold found at value: {t}")
 # for all pixels greater than the predicted threshold value, keep them 'turned on'
 binary_mask = blurred_img > t
+
+labeled_image, cell_count = measure.label(binary_mask, connectivity=2, return_num=True)
+print(f"There are {cell_count} cells in {path}")
+
 # make a copy of the image
 selection = image.copy()
 # for all pixels that did not fit the criteria, set the value to 0 or 'turned off'
@@ -62,20 +65,38 @@ selection[~binary_mask] = 0
 # plt.imshow(selection)
 # plt.show()
 
+labeled_image, cell_count = measure.label(binary_mask, connectivity=2, return_num=True)
+# store the data of from the mask application in the variable colored_label_image
+colored_label_image = color.label2rgb(labeled_image, bg_label=0)
+# remove the grayscale filter
+summary_image = color.gray2rgb(gray_img)
+# apply the mask data to the numpy pixel array for printing
+summary_image[binary_mask] = colored_label_image[binary_mask]
+############################################################################
 
+# create a second mask using yen's threshold value
 binary_mask2 = blurred_img > y 
-
+# create an image copy for the bitmask to be overlayed
 selection2 =  image.copy()
-
+# all pixels that do not meet the criteria are updated to 0's
 selection2[~binary_mask2] = 0
 
+labeled_image2, cell_count2 = measure.label(binary_mask2, connectivity=2, return_num=True)
+print(f"There are {cell_count2} cells in {path}")
+
+# store the data of from the mask application in the variable colored_label_image
+colored_label_image2 = color.label2rgb(labeled_image2, bg_label=0)
+# remove the grayscale filter
+summary_image2 = color.gray2rgb(gray_img)
+# apply the mask data to the numpy pixel array for printing
+summary_image2[binary_mask2] = colored_label_image2[binary_mask2]
 
 # print a figure for comparison purposes
 # display images
 fig = plt.figure(figsize=(17,15))
-plt.subplots_adjust(right=0.9)
+plt.subplots_adjust(right=0.7)
 rows=3
-cols=3
+cols=2
 
 fig.add_subplot(rows, cols, 1)
 # display original image
@@ -97,7 +118,7 @@ plt.title('otsu bitmask')
 
 fig.add_subplot(rows, cols, 4)
 # display original image
-plt.imshow(selection)
+plt.imshow(summary_image)
 plt.axis('on')
 plt.title('Otsu bitmask applied to Image')
 
@@ -105,11 +126,11 @@ fig.add_subplot(rows, cols, 5)
 # display original image
 plt.imshow(binary_mask2, cmap="gray")
 plt.axis('on')
-plt.title('Yen bitmask applied to Image')
+plt.title('Yen bitmask')
 
 fig.add_subplot(rows, cols, 6)
 # display original image
-plt.imshow(selection2)
+plt.imshow(summary_image2)
 plt.axis('on')
 plt.title('Yen bitmask applied to Image')
 

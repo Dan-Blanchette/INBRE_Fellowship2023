@@ -15,20 +15,20 @@ import skimage.filters as skfilter
 import skimage.color as color
 from skimage import img_as_ubyte
 
-# #select the path
-# path = "../../Desktop/greenImgs/spec_1/frame_1/*.tif"
-# img_number = 1  #Start an iterator for image number.
-# #This number can be later added to output image file names.
+#select the path
+path = "../../Desktop/greenImgs/spec_1/frame_1/*.tif"
+img_number = 1  #Start an iterator for image number.
+#This number can be later added to output image file names.
 
-# for file in glob.glob(path):
-#     print(file)     #just stop here to see all file names printed
-#     img= io.imread(file, 'pil')  #now, we can read each file since we have the full path
+for file in glob.glob(path):
+    print(file)     #just stop here to see all file names printed
+    img= io.imread(file, 'pil')  #now, we can read each file since we have the full path
     
-# #process each image - change color from BGR to RGB.
-#     smoothed_image = img_as_ubyte(skfilter.try_all_threshold(img, figsize=(8,5), verbose=True))
+#process each image - change color from BGR to RGB.
+    smoothed_image = img_as_ubyte(skfilter.try_all_threshold(img, figsize=(8,5), verbose=True))
     
-#     cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/smoothed_image"+str(img_number)+".png", smoothed_image)
-#     img_number +=1     
+    cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/smoothed_image"+str(img_number)+".png", smoothed_image)
+    img_number +=1     
 
 # ###########################################
 
