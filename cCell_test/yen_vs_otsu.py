@@ -30,14 +30,14 @@ blurred_img = filters.gaussian(gray_img, sigma=1.0)
 # plt.imshow(blurred_img, cmap='gray')
 # plt.show()
 
-# generate a histogram with the threshold range for an optimal bitmask
-histogram, bin_edges = np.histogram(blurred_img, bins=256, range=(0.0, 1.0))
-fig, ax = plt.subplots()
-plt.plot(bin_edges[0:-1], histogram)
-plt.title("Graylevel histogram")
-plt.xlabel("gray value")
-plt.ylabel("pixel count")
-plt.xlim(0, 1.0)
+# # generate a histogram with the threshold range for an optimal bitmask
+# histogram, bin_edges = np.histogram(blurred_img, bins=256, range=(0.0, 1.0))
+# fig, ax = plt.subplots()
+# plt.plot(bin_edges[0:-1], histogram)
+# plt.title("Graylevel histogram")
+# plt.xlabel("gray value")
+# plt.ylabel("pixel count")
+# plt.xlim(0, 1.0)
 
 
 # using otsu's method, find the threshold value that best 'fits' for image segementation
@@ -47,14 +47,17 @@ t = filters.threshold_otsu(blurred_img)
 y = filters.threshold_yen(blurred_img)
 
 # try all filters
-all_thresh = filters.try_all_threshold(blurred_img)
+fig, ax = filters.try_all_threshold(blurred_img, figsize=(20,18), verbose=False)
+plt.savefig('../../Desktop/try_all.png', transparent=True)
 
 print(f"threshold found at value: {t}")
 # for all pixels greater than the predicted threshold value, keep them 'turned on'
-binary_mask = blurred_img > t
+binary_mask = blurred_img > t 
 
 labeled_image, cell_count = measure.label(binary_mask, connectivity=2, return_num=True)
-print(f"There are {cell_count} cells in {path}")
+# remove one object for otsu as it is counting the background as an object
+cell_count_otsu = (cell_count - 1)
+print(f"There are {cell_count_otsu} cells in {path}")
 
 # make a copy of the image
 selection = image.copy()
@@ -67,13 +70,15 @@ selection[~binary_mask] = 0
 
 labeled_image, cell_count = measure.label(binary_mask, connectivity=2, return_num=True)
 # store the data of from the mask application in the variable colored_label_image
-colored_label_image = color.label2rgb(labeled_image, bg_label=0)
+colored_label_image = color.label2rgb(labeled_image)
 # remove the grayscale filter
 summary_image = color.gray2rgb(gray_img)
 # apply the mask data to the numpy pixel array for printing
 summary_image[binary_mask] = colored_label_image[binary_mask]
 ############################################################################
 
+
+print(f"threshold found at value: {y}")
 # create a second mask using yen's threshold value
 binary_mask2 = blurred_img > y 
 # create an image copy for the bitmask to be overlayed
@@ -93,47 +98,43 @@ summary_image2[binary_mask2] = colored_label_image2[binary_mask2]
 
 # print a figure for comparison purposes
 # display images
-fig = plt.figure(figsize=(17,15))
-plt.subplots_adjust(right=0.7)
-rows=3
-cols=2
+fig = plt.figure(figsize=(14,12))
+# plt.subplots_adjust(right=0.7)
+rows=2
+cols=3
 
 fig.add_subplot(rows, cols, 1)
 # display original image
 plt.imshow(og_img)
 plt.axis('on')
-plt.title('Specimen #1\n Frame 1 of 97\n Z-pos: 02')
+# plt.colorbar()
+plt.title('Specimen #1\n Frame 1 of 97\n Z-pos: 01')
 
 fig.add_subplot(rows, cols, 2)
-# display original image
 plt.imshow(image)
 plt.axis('on')
-plt.title('Green Channel Image')
+plt.title('Specimen #1\nGreen Channel Isolated')
 
 fig.add_subplot(rows, cols, 3)
-# display original image
 plt.imshow(binary_mask, cmap="gray")
 plt.axis('on')
-plt.title('otsu bitmask')
+plt.title('Otsu Thresholding Method Bitmask')
 
 fig.add_subplot(rows, cols, 4)
-# display original image
 plt.imshow(summary_image)
 plt.axis('on')
-plt.title('Otsu bitmask applied to Image')
+plt.title(f'Otsu Bitmask Applied to Image\nCell Count: {cell_count_otsu}')
 
 fig.add_subplot(rows, cols, 5)
-# display original image
 plt.imshow(binary_mask2, cmap="gray")
 plt.axis('on')
-plt.title('Yen bitmask')
+plt.title('Yen Thresholding Method Bitmask')
 
 fig.add_subplot(rows, cols, 6)
-# display original image
 plt.imshow(summary_image2)
 plt.axis('on')
-plt.title('Yen bitmask applied to Image')
-
+plt.title(f'Yen Bitmask Applied to Image\nCell Count: {cell_count2}')
+plt.savefig('../../Desktop/compare.png', transparent=True)
 
 # 
 # fig, ax = plt.subplots()

@@ -25,9 +25,9 @@ for file in glob.glob(path):
     img= io.imread(file, 'pil')  #now, we can read each file since we have the full path
     
 #process each image - change color from BGR to RGB.
-    smoothed_image = img_as_ubyte(skfilter.try_all_threshold(img, figsize=(8,5), verbose=True))
+    # smoothed_image = img_as_ubyte(skfilter.try_all_threshold(img, figsize=(8,5), verbose=True))
     
-    cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/smoothed_image"+str(img_number)+".png", smoothed_image)
+    cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/Otsu"+str(img_number)+".png", smoothed_image)
     img_number +=1     
 
 # ###########################################
@@ -54,38 +54,38 @@ for file in glob.glob(path):
        
 
 ################################################
-#Capture all mages into an array and then iterate through each image
+#Capture all images into an array and then iterate through each image
 #Normally used for machine learning workflows.
 
-import numpy as np
-import cv2
-import os
-import glob
-from skimage.filters import gaussian
-from skimage import img_as_ubyte
-import matplotlib.pyplot as plt
+# import numpy as np
+# import cv2
+# import os
+# import glob
+# from skimage.filters import gaussian
+# from skimage import img_as_ubyte
+# import matplotlib.pyplot as plt
 
-images_list = []
-SIZE = 512
+# images_list = []
+# SIZE = 512
 
-path = "../../Desktop/greenImgs/spec_1/frame_1/*.tif"
+# path = "../../Desktop/greenImgs/spec_1/frame_1/*.tif"
 
-#First create a stack array of all images
-for file in glob.glob(path):
-    print(file)     #just stop here to see all file names printed
-    img= cv2.imread(file, 0)  #now, we can read each file since we have the full path
-    img = cv2.resize(img, (SIZE, SIZE))
-    images_list.append(img)
+# #First create a stack array of all images
+# for file in glob.glob(path):
+#     print(file)     #just stop here to see all file names printed
+#     img= cv2.imread(file, 0)  #now, we can read each file since we have the full path
+#     img = cv2.resize(img, (SIZE, SIZE))
+#     images_list.append(img)
         
-images_list = np.array(images_list)
+# images_list = np.array(images_list)
 
-#Process each slice in the stack
-img_number = 1
-for image in range(images_list.shape[0]):
-    input_img = images_list[image,:,:]  #Grey images. For color add another dim.
-    smoothed_image = img_as_ubyte(gaussian(input_img, sigma=5, mode='constant', cval=0.0))
-    cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/smoothed_image"+str(img_number)+".png", smoothed_image)
-    img_number +=1 
+# #Process each slice in the stack
+# img_number = 1
+# for image in range(images_list.shape[0]):
+#     input_img = images_list[image,:,:]  #Grey images. For color add another dim.
+#     smoothed_image = img_as_ubyte(gaussian(input_img, sigma=5, mode='constant', cval=0.0))
+#     cv2.imwrite("../../Desktop/greenImgs/spec_1/frame_1/results/smoothed_image"+str(img_number)+".png", smoothed_image)
+    # img_number +=1 
        
 # ########################################################
 # #Reading multidimensional tif images and processing slice by slice
