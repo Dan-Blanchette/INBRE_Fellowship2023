@@ -6,22 +6,22 @@ DATE: July 5 2023
 DESCRIPTION: This program will batch process Z-stacks in each frame folder and apply the
 Otsu + Multi-Otsu methods for image segmentation and quantification.
 """
-# import pandas as pd
+import pandas as pd
 import csv
 from skimage import io
 import os
-# import numpy as np
+import numpy as np
 import glob
 import matplotlib.pyplot as plt
-# import ipympl
-# import cv2
-# import re
-# import numpy as np
+import ipympl
+import cv2
+import re
+import numpy as np
 # import imageio.v3 as iio
 from skimage import color
 from skimage import filters
 from skimage import measure
-# from skimage import img_as_ubyte
+from skimage import img_as_ubyte
 
 image_list = []
 
@@ -43,7 +43,7 @@ img_number = 1  # Start an iterator for image number.
 
 for i in range(5):
     print(f'Frame_{i+1} Batch')
-    with open(f'../../Desktop/batch_files/FR{i+1}_Results.csv', 'w', newline='') as csvfile:
+    with open(f'../../Desktop/batch2_files/FR{i+1}_YenOtsu_Results.csv', 'w', newline='') as csvfile:
         fieldnames = ['Frame_ID', 'Z-pos', 'Cell_Count',
             'Thresh_Method', 'Threshold Val']
         my_writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -59,7 +59,7 @@ for i in range(5):
             blurred_img = filters.gaussian(gray_img, sigma=1.5)
             # plt.imshow(blurred_img)
             # plt.show()
-            ot_thresh = filters.threshold_otsu(blurred_img)
+            yen_thresh = filters.threshold_yen(blurred_img)
             mult_ot_thresh = filters.threshold_multiotsu(blurred_img, 5)
             # plt.savefig(f'../../Desktop/batch_files/{img_number}_RES.png', dpi=300)
             # the minimum threshold value based on multi-otsu
@@ -74,7 +74,7 @@ for i in range(5):
             # ************** DARKER IMAGES ********************
             '''if the otsu threshold predicted is greater than the min mult-otsu value
                     and the second highest value is less than 0.09'''
-            if (min_val < ot_thresh) and (mot_med2 < 0.09):
+            if (min_val < yen_thresh) and (mot_med2 < 0.09):
                     '''The image is darker in contrast so use the adjusted max threhold value
                     for segmentation
                     '''
@@ -99,7 +99,7 @@ for i in range(5):
                     '''else if the otsu thresh is greater than the min mult-otsu value
                         and the second lowest multi-otsu value is less than the
                         otsu threhsold and the same second lowest value is greater than 0.1'''
-            elif (min_val < ot_thresh) and (mot_med1 < ot_thresh) and (mot_med1 > 0.1):
+            elif (min_val < yen_thresh) and (mot_med1 < yen_thresh) and (mot_med1 > 0.1):
                     '''use the second lowest value from mult-otsu as a threshold'''
                     binary_mask = blurred_img > mot_med1
                     chosen_thresh = mot_med1
@@ -109,34 +109,32 @@ for i in range(5):
             # ************ EDGE CASE WHERE THE OTSU THREHSHOLD WILL BE USED  **********
             # else if the min_val multi-tosu is less than the otsu threshold
             # and the otsu threshold is still less than the max_value for multi-otsu
-            elif (min_val < ot_thresh) and (ot_thresh < max_value):
+            elif (min_val < yen_thresh) and (yen_thresh < max_value):
                     # use the otsu threhold in this case
-                    if ot_thresh < 0.07:
+                    if yen_thresh > 0.2:
                         binary_mask = blurred_img > mot_med2
                         chosen_thresh = mot_med2
                         thresh_type = "mod_med2 Thresh"
                     else:
-                        binary_mask = blurred_img > ot_thresh
-                        chosen_thresh = ot_thresh
-                        thresh_type = "Otsu Thresh"
+                        binary_mask = blurred_img > yen_thresh
+                        chosen_thresh = yen_thresh
+                        thresh_type = "Yen Thresh"
     
 
                     print(f'Using {thresh_type} {chosen_thresh} applied to Z{img_number} ')
             # ************ DEFAULT TO THE MULTI-OTSU VALUE THAT IS ONE ABOVE THE MIN VALUE ***************
             else:
-                if mot_med1 < 0.07:
-                    # otherwise, use the second lowest image segmentation for all other cases.
-                    binary_mask = blurred_img > mot_med2
-                    chosen_thresh = mot_med2
-                    thresh_type = "Def: mot med2 Thresh"
-                    # print(f'Defaulting to Med1_Value {mot_med1} applied to Z{img_number} ')
-                else:
+                # otherwise, use the second lowest image segmentation for all other cases.
+                if mot_med1 > 0.085:
                     binary_mask = blurred_img > mot_med1
                     chosen_thresh = mot_med1
                     thresh_type = "Def: mot med1 Thresh"
-
-
-
+                    # print(f'Defaulting to Med1_Value {mot_med1} applied to Z{img_number} ')
+                else:
+                     binary_mask = blurred_img > mot_med2
+                     chosen_thresh = mot_med2
+                     thresh_type = "Def: mot med2 Thresh"
+    
             labeled_image, cell_count = measure.label(binary_mask, connectivity=2, return_num=True)
             # remove one object for otsu as it is counting the background as an object
     
@@ -185,7 +183,7 @@ for i in range(5):
             plt.axis('off')
             plt.title(f'Applied {thresh_type}\nCell Count: {cell_count}', fontsize=14)
             
-            plt.savefig(f'../../Desktop/batch_files/FR{i+1}_Z{img_number}_Results.png', dpi=300)
+            plt.savefig(f'../../Desktop/batch2_files/FR{i+1}_Z{img_number}_YenOtsu_Results.png', dpi=300)
             # plt.show()
             plt.close(fig)
     
