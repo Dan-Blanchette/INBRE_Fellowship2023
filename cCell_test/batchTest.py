@@ -109,6 +109,3 @@ for file in glob.glob(path):
 #     smoothed_image = img_as_ubyte(gaussian(input_img, sigma=5, mode='constant', cval=0.0))
 #     cv2.imwrite("test_images/smoothed/smoothed_image"+str(img_number)+".jpg", smoothed_image)
 #     img_number +=1     
-   
-    
-    
