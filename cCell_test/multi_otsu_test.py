@@ -87,23 +87,23 @@ if (min_val < ot_thresh) and (mot_med2 < 0.09):
     '''else if the otsu thresh is greater than the min mult-otsu value
        and the second lowest multi-otsu value is less than the
        otsu threhsold and the same second lowest value is greater than 0.1'''
-# # ******************* EDGE CASE WHERE MULTI-OTSU VALUE IN LIST ELEMENT 1 IS JUST ABOVE 0.1 ***********      
-# elif (min_val < ot_thresh) and (mot_med1 < ot_thresh) and (mot_med1 > 0.1):
-#     '''use the second lowest value from mult-otsu as a threshold'''
-#     binary_mask = blurred_img > mot_med1
-#     chosen_thresh = mot_med1
-#     '''else if the min_val multi-tosu is less than the otsu threshold
-#        and the otsu threshold is still less than the max_value for multi-otsu'''
-# # ************ EDGE CASE WHERE THE OTSU THREHSHOLD WILL BE USED  **********
-# elif (min_val < ot_thresh) and (ot_thresh < max_value):
-#     # use the otsu threhold in this case
-#     binary_mask = blurred_img > ot_thresh
-#     chosen_thresh = ot_thresh
-# # ************ DEFAULT TO THE MULTI-OTSU VALUE THAT IS ONE ABOVE THE MIN VALUE ***************
-# else:
-#     # otherwise, use the second lowest image segmentation for all other cases.
-#     binary_mask = blurred_img > mot_med1
-#     chosen_thresh = mot_med1
+# ******************* EDGE CASE WHERE MULTI-OTSU VALUE IN LIST ELEMENT 1 IS JUST ABOVE 0.1 ***********      
+elif (min_val < ot_thresh) and (mot_med1 < ot_thresh) and (mot_med1 > 0.1):
+    '''use the second lowest value from mult-otsu as a threshold'''
+    binary_mask = blurred_img > mot_med1
+    chosen_thresh = mot_med1
+    '''else if the min_val multi-tosu is less than the otsu threshold
+       and the otsu threshold is still less than the max_value for multi-otsu'''
+# ************ EDGE CASE WHERE THE OTSU THREHSHOLD WILL BE USED  **********
+elif (min_val < ot_thresh) and (ot_thresh < max_value):
+    # use the otsu threhold in this case
+    binary_mask = blurred_img > ot_thresh
+    chosen_thresh = ot_thresh
+# ************ DEFAULT TO THE MULTI-OTSU VALUE THAT IS ONE ABOVE THE MIN VALUE ***************
+else:
+    # otherwise, use the second lowest image segmentation for all other cases.
+    binary_mask = blurred_img > mot_med1
+    chosen_thresh = mot_med1
 
 # # for all pixels greater than the predicted threshold value, keep them 'turned on'
 # binary_mask = blurred_img > default
@@ -131,7 +131,7 @@ colored_label_image = color.label2rgb(labeled_image)
 summary_image = color.gray2rgb(gray_img)
 # apply the mask data to the numpy pixel array for printing
 summary_image[binary_mask] = colored_label_image[binary_mask]
-print(f"There are {cell_count} cells in {path}")
+# print(f"There are {cell_count} cells in {path}")
 
 
 # matplotlib.rc('font', **font)
